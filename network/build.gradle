@@ -1,0 +1,31 @@
+plugins {
+    id("java-library")
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.plugin.serialization") version '1.8.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    // kotlin
+    implementation "$Libraries.kotlinJson"
+
+    implementation "$Libraries.kotlinCoroutines"
+
+    // Koin
+    implementation "$Libraries.koin"
+
+    // retrofit
+    implementation "$Libraries.retrofit"
+    implementation "$Libraries.retrofitKotlinJsonConverter"
+
+    // Arrow
+    implementation "$Libraries.arrowCore"
+    implementation "$Libraries.arrowCoreRetrofit"
+
+    implementation "$Libraries.okHttpInterceptor"
+    implementation "$Libraries.okHttp"
+}

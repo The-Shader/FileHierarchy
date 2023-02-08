@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FileHierarchy</string>
+    <string name="home_title">File Explorer</string>
+    <string name="item_name" >File Name: %1$s</string>
+    <string name="login_error">Error: could not load current user</string>
+    <string name="folder_details_error">Error: could not load folder items</string>
+    <string name="image_error">Error: could not download image</string>
+</resources>

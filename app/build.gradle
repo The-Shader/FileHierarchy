@@ -1,0 +1,72 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk Versions.compileSdk
+
+    defaultConfig {
+        applicationId "com.fireblade.filehierarchy"
+        minSdk Versions.minSdk
+        targetSdk Versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = Versions.kotlinJvmTarget
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerVersion "1.5.31"
+        kotlinCompilerExtensionVersion "1.3.1"
+    }
+}
+
+dependencies {
+
+    implementation project(":network")
+    implementation project(":repository")
+
+    // Koin
+    implementation "$Libraries.koin"
+    implementation "$Libraries.koinAndroid"
+
+    testImplementation "$Libraries.junit"
+    testImplementation "$Libraries.mockk"
+    testImplementation "$Libraries.kotlinCoroutinesTest"
+    testImplementation "$Libraries.turbine"
+
+    implementation "$Libraries.lifecycleViewModelExtensions"
+    implementation "$Libraries.composeMaterialTheme"
+
+    implementation "$Libraries.composeFoundation"
+    implementation "$Libraries.composeUi"
+    implementation "$Libraries.composeUiUtil"
+    implementation "$Libraries.composeMaterial"
+    implementation "$Libraries.composeActivity"
+
+    implementation "$Libraries.composeNavigation"
+
+    implementation "$Libraries.constraintLayoutCompose"
+
+    implementation "$Libraries.glideCompose"
+
+    // Arrow
+    implementation "$Libraries.arrowCore"
+}
