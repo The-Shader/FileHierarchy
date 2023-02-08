@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
@@ -82,7 +83,12 @@ class HomeActivity : ComponentActivity() {
                     } else {
                         SimpleTextTitle()
                     }
-                    ItemList(listItems = state.childItems, onItemClick = onItemClick)
+                    when (state.errorStatus) {
+                        ErrorStatus.NONE,
+                        ErrorStatus.IMAGE_DOWNLOAD_FAILED -> ItemList(listItems = state.childItems, onItemClick = onItemClick)
+                        ErrorStatus.CONTENT_FAILED -> ErrorText(resId = R.string.folder_details_error)
+                        ErrorStatus.USER_FAILED -> ErrorText(resId = R.string.login_error)
+                    }
                 }
             }
         }
@@ -130,6 +136,26 @@ class HomeActivity : ComponentActivity() {
                 modifier = Modifier.padding(start = 96.dp, top = 8.dp, bottom = 8.dp)
             )
         }
+    }
+
+    @Composable
+    private fun ErrorText(resId: Int) {
+        Text(
+            text = getString(resId),
+            style = TextStyle(
+                fontFamily = FontFamily.Default,
+                fontSize = 40.sp,
+                lineHeight = 30.sp,
+                color = Color(0XFFCF1726)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 24.dp,
+                    top = 24.dp,
+                    end = 24.dp
+                )
+        )
     }
 
     @Composable

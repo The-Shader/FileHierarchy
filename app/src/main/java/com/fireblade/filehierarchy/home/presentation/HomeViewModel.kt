@@ -12,7 +12,8 @@ initialState = HomeViewModelState()
         return HomeViewState(
             navigationHistory = state.navigationHistory,
             childItems = state.childItems,
-            rawImage = state.rawImage
+            rawImage = state.rawImage,
+            errorStatus = state.errorStatus
         )
     }
 
@@ -21,11 +22,19 @@ initialState = HomeViewModelState()
             HomeViewIntent.LoadCurrentUser -> fileExplorerService.getCurrentUser()
                 .fold(
                     ifLeft = {
+                        updateState {
+                            modelState.copy(
+                                errorStatus = ErrorStatus.USER_FAILED
+                            )
+                        }
                     },
                     ifRight = { currentUser ->
                         updateState {
                             modelState.copy(
-                                navigationHistory = listOf(currentUser.rootItem.toViewItem())
+                                navigationHistory = listOf(currentUser.rootItem.toViewItem()),
+                                childItems = listOf(),
+                                rawImage = null,
+                                errorStatus = ErrorStatus.NONE
                             )
                         }
                         onIntent(HomeViewIntent.LoadChildItems(rootItemId = currentUser.rootItem.id))
@@ -34,11 +43,18 @@ initialState = HomeViewModelState()
             is HomeViewIntent.LoadChildItems -> fileExplorerService.getItemInfo(intent.rootItemId)
                 .fold(
                     ifLeft = {
+                        updateState {
+                            modelState.copy(
+                                errorStatus = ErrorStatus.CONTENT_FAILED
+                            )
+                        }
                     },
                     ifRight = { items ->
                         updateState {
                             modelState.copy(
-                                childItems = items.map { it.toViewItem() }
+                                childItems = items.map { it.toViewItem() },
+                                rawImage = null,
+                                errorStatus = ErrorStatus.NONE
                             )
                         }
                     }
@@ -46,15 +62,21 @@ initialState = HomeViewModelState()
             is HomeViewIntent.NavigateToFolder -> fileExplorerService.getItemInfo(intent.item.id)
                 .fold(
                     ifLeft = {
+                        updateState {
+                            modelState.copy(
+                                errorStatus = ErrorStatus.CONTENT_FAILED
+                            )
+                        }
                     },
                     ifRight = { items ->
                         updateState {
                             modelState.copy(
                                 navigationHistory = modelState.navigationHistory.plus(intent.item),
-                                childItems = items.map { it.toViewItem() }
+                                childItems = items.map { it.toViewItem() },
+                                rawImage = null,
+                                errorStatus = ErrorStatus.NONE
                             )
                         }
-
                     }
                 )
             is HomeViewIntent.NavigateBackToFolder -> {
@@ -62,12 +84,19 @@ initialState = HomeViewModelState()
                 fileExplorerService.getItemInfo(newHistory.last().id)
                     .fold(
                         ifLeft = {
+                            updateState {
+                                modelState.copy(
+                                    errorStatus = ErrorStatus.CONTENT_FAILED
+                                )
+                            }
                         },
                         ifRight = { items ->
                             updateState {
                                 modelState.copy(
                                     navigationHistory = newHistory,
-                                    childItems = items.map { it.toViewItem() }
+                                    childItems = items.map { it.toViewItem() },
+                                    rawImage = null,
+                                    errorStatus = ErrorStatus.NONE
                                 )
                             }
                         }
@@ -76,11 +105,17 @@ initialState = HomeViewModelState()
             is HomeViewIntent.ShowImage -> fileExplorerService.downloadItem(intent.imageId)
                 .fold(
                     ifLeft = {
+                         updateState {
+                             modelState.copy(
+                                 errorStatus = ErrorStatus.IMAGE_DOWNLOAD_FAILED
+                             )
+                         }
                     },
                     ifRight = { rawImage ->
                         updateState {
                             modelState.copy(
-                                rawImage = rawImage
+                                rawImage = rawImage,
+                                errorStatus = ErrorStatus.NONE
                             )
                         }
                     }
